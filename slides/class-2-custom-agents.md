@@ -3,7 +3,7 @@
 
 ![AdaL Logo](assets/adal-logo-horizontal.svg)
 
-**AdaL Bootcamp 2 · Class 2 · by Li Yin**
+**AdaL Bootcamp 2 · Class 2 · taught by Zach Wilson · by Li Yin**
 
 ---
 
@@ -81,7 +81,7 @@ Tool groups: `Bash`, `Edit`, `Read`, `Search`, `Web`, `Image`, `Video`, `Consult
 adal --remove-tools "Bash,Edit,Image,Video"
 ```
 
-> Full tool-choice documentation coming soon.
+> Full tool-choice documentation: [docs.sylph.ai/features/built-in-tools](https://docs.sylph.ai/features/built-in-tools)
 
 ---
 
@@ -141,8 +141,6 @@ Link: [docs.sylph.ai/features/custom-tools](https://docs.sylph.ai/features/custo
 The agent uses these tools to provide real-time product availability, calculate discounts, and capture leads — all in natural conversation.
 
 **Try it:** [ruf2xych2b.us-west-2.awsapprunner.com](https://ruf2xych2b.us-west-2.awsapprunner.com/)
-
-**Codebase:** Ask AdaL to look at `adal/customized_agent_platform/examples/customer_sales_agent`
 
 ---
 
@@ -210,4 +208,3 @@ asyncio.run(main())
 - **Custom System Prompt:** [docs.sylph.ai/features/custom-system-prompt](https://docs.sylph.ai/features/custom-system-prompt)
 - **Custom Tools:** [docs.sylph.ai/features/custom-tools](https://docs.sylph.ai/features/custom-tools)
 - **Live Demo (Sales Agent):** [ruf2xych2b.us-west-2.awsapprunner.com](https://ruf2xych2b.us-west-2.awsapprunner.com/)
-- **Example Codebase:** `adal/customized_agent_platform/examples/customer_sales_agent`
