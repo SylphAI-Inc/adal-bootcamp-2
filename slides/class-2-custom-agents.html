@@ -163,12 +163,12 @@
     <table>
       <tr><th>Flag</th><th>What it does</th></tr>
       <tr><td><code>--allowed-tools</code></td><td>Auto-approve specific tools (agent still sees all)</td></tr>
-      <tr><td><code>--enabled-default-tools</code></td><td>Choose which built-in tools the agent can <span class="accent">see and use</span></td></tr>
+      <tr><td><code>--remove-tools</code></td><td>Strip built-in tools entirely — <span class="accent">invisible + unexecutable</span></td></tr>
     </table>
     <p style="margin-top:0.5em;font-size:0.95em">Tool groups: <code>Bash</code> · <code>Edit</code> · <code>Read</code> · <code>Search</code> · <code>Web</code> · <code>Image</code> · <code>Video</code> · <code>Consult</code></p>
     <div class="terminal" style="margin-top:0.5em">
       <div class="line"><span class="comment"># Agent can read and search — no edits, no bash</span></div>
-      <div class="line"><span class="prompt">$</span> <span class="cmd">adal --enabled-default-tools "Read,Search"</span></div>
+      <div class="line"><span class="prompt">$</span> <span class="cmd">adal --remove-tools "Bash,Edit,Image,Video"</span></div>
     </div>
     <p class="muted" style="margin-top:0.5em">Full tool-choice documentation coming soon.</p>
     <div class="slide-num">6 / 10</div>
@@ -282,7 +282,7 @@
         <h3 style="color:#FF5898">Build Your Own — The Flow</h3>
         <ol style="font-size:0.85em;line-height:1.7;padding-left:1.5em">
           <li>Define persona → <code>AGENTS.md</code></li>
-          <li>Choose tools → <code>--enabled-default-tools</code></li>
+          <li>Choose tools → <code>--remove-tools</code></li>
           <li>Add custom tools → <code>.adal/tools.py</code></li>
           <li>Create agent on Cloud</li>
           <li>Stream chat via HTTP API</li>

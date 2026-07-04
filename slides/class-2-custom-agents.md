@@ -72,13 +72,13 @@ AdaL ships with a full toolset. You control which tools the agent can see and us
 | Flag | What it does |
 |------|-------------|
 | `--allowed-tools` | Auto-approve specific tools (agent still sees all) |
-| `--enabled-default-tools` | Choose which built-in tools the agent can see and use |
+| `--remove-tools` | Strip built-in tools entirely — invisible + unexecutable |
 
 Tool groups: `Bash`, `Edit`, `Read`, `Search`, `Web`, `Image`, `Video`, `Consult`
 
 ```bash
 # Agent can only read and search — no edits, no bash
-adal --enabled-default-tools "Read,Search"
+adal --remove-tools "Bash,Edit,Image,Video"
 ```
 
 > Full tool-choice documentation coming soon.
@@ -194,7 +194,7 @@ asyncio.run(main())
 ## Slide 10: Build Your Own — The Flow
 
 1. **Define persona** → write `AGENTS.md` or `--prompt-file`
-2. **Choose tools** → `--enabled-default-tools` / `--allowed-tools` to select a subset
+2. **Choose tools** → `--remove-tools` / `--allowed-tools` to select a subset
 3. **Add custom tools** → `.adal/tools.py` with `CUSTOM_TOOLS`
 4. **Create agent on Cloud** → name + prompt + tools
 5. **Start session** → stream chat via HTTP API
