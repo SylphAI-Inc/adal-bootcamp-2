@@ -1,6 +1,7 @@
 <svg width="900" height="320" viewBox="0 0 900 320" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Title -->
-  <text x="450" y="30" text-anchor="middle" fill="#fff" font-family="system-ui" font-size="16" font-weight="700" opacity="0.6">AdaL sits where all three converge</text>
+    <text x="450" y="30" text-anchor="middle" fill="#fff" font-family="system-ui" font-size="16" font-weight="700" opacity="0.6">AdaL sits where all three converge</text>
+  <text x="450" y="52" text-anchor="middle" fill="#FF5898" font-family="system-ui" font-size="13" font-weight="600" opacity="0.8">the bottleneck is cost and human judgement</text>
 
   <!-- Three pillars -->
   <!-- Cost-effective -->
