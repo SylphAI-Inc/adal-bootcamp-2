@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beyond Loop Engineering — AdaL</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { font-size: clamp(12px, 1.5vw, 22px); }
+  body {
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a0a;
+    color: #1a1a1a;
+    overflow: hidden;
+  }
+  .deck { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute; inset: 0;
+    display: none; flex-direction: column; justify-content: center; align-items: center;
+    padding: clamp(20px, 5vh, 60px) clamp(24px, 6vw, 80px);
+    background: #fff;
+  }
+  .slide.active { display: flex; }
+  .slide.dark { background: #0a0a0a; color: #fff; }
+
+  /* Typography */
+  h1 { font-size: clamp(1.8em, 5vw, 3.2em); font-weight: 800; line-height: 1.15; margin-bottom: 0.5em; letter-spacing: -0.02em; }
+  h2 { font-size: clamp(1.2em, 3vw, 1.8em); font-weight: 600; color: #FF5898; margin-bottom: 0.8em; }
+  h3 { font-size: clamp(1em, 2vw, 1.3em); font-weight: 600; margin: 0.8em 0 0.4em; }
+  p { font-size: clamp(0.9em, 1.8vw, 1.2em); line-height: 1.6; max-width: 56em; margin-bottom: 0.5em; }
+  ul { font-size: clamp(0.85em, 1.6vw, 1.1em); line-height: 1.8; max-width: 52em; margin-bottom: 0.5em; padding-left: 1.5em; }
+  li { margin-bottom: 0.3em; }
+
+  /* Quote */
+  blockquote {
+    font-size: clamp(1em, 2.4vw, 1.5em); line-height: 1.5; font-style: italic; color: #444;
+    border-left: 4px solid #FF5898; padding-left: 1.2em; margin: 0 0 0.8em;
+    max-width: 54em;
+  }
+  .dark blockquote { color: #ccc; }
+  blockquote cite { display: block; font-size: 0.65em; font-style: normal; color: #FF5898; margin-top: 0.5em; }
+
+  /* Tables */
+  table { border-collapse: collapse; width: 100%; max-width: 56em; margin: 0.5em 0; font-size: clamp(0.75em, 1.5vw, 1em); }
+  th { text-align: left; padding: 0.6em 0.8em; background: #f5f5f5; border-bottom: 2px solid #FF5898; font-weight: 600; }
+  td { padding: 0.5em 0.8em; border-bottom: 1px solid #eee; }
+  .dark th { background: #1a1a1a; }
+  .dark td { border-color: #2a2a2a; }
+
+  /* Tag */
+  .tag { display: inline-block; font-size: clamp(0.65em, 1.3vw, 0.85em); font-weight: 600; color: #FF5898; border: 1px solid #FF5898; border-radius: 99px; padding: 0.3em 0.9em; margin-bottom: 0.6em; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* Logo */
+  .logo { height: clamp(32px, 5vh, 56px); margin-bottom: 1em; }
+  .logo-large { height: clamp(48px, 8vh, 90px); margin-bottom: 1.2em; }
+
+  /* Two columns */
+  .two-col { display: flex; gap: clamp(20px, 4vw, 48px); max-width: 60em; width: 100%; }
+  .two-col > div { flex: 1; }
+
+  /* Big number */
+  .big-num { font-size: clamp(2.5em, 8vw, 4em); font-weight: 800; color: #FF5898; line-height: 1; }
+
+  /* Slide number */
+  .slide-num { position: absolute; bottom: 1em; right: 1.5em; font-size: clamp(0.7em, 1.2vw, 0.9em); color: #999; }
+
+  /* Nav */
+  .nav { position: fixed; bottom: clamp(12px, 2vh, 24px); left: 50%; transform: translateX(-50%); display: flex; gap: 0.8em; align-items: center; z-index: 100; }
+  .nav button { background: #FF5898; color: #fff; border: none; border-radius: 8px; padding: 0.5em 1em; font-size: clamp(0.8em, 1.4vw, 1em); cursor: pointer; font-weight: 600; }
+  .nav button:disabled { opacity: 0.3; cursor: default; }
+  .nav .counter { color: #888; font-size: clamp(0.7em, 1.2vw, 0.9em); min-width: 4em; text-align: center; }
+
+  /* Title slide */
+  .title-slide { text-align: center; }
+  .title-slide h1 { font-size: clamp(2em, 6vw, 3.8em); }
+  .title-slide .subtitle { font-size: clamp(1em, 2.5vw, 1.4em); color: #888; margin-top: 0.3em; }
+  .title-slide .meta { font-size: clamp(0.8em, 1.5vw, 1em); color: #aaa; margin-top: 1.5em; }
+
+  /* Emphasis */
+  .accent { color: #FF5898; font-weight: 600; }
+  .muted { color: #888; font-size: 0.85em; }
+
+  /* Cards */
+  .cards { display: flex; gap: clamp(12px, 2vw, 24px); max-width: 60em; width: 100%; margin: 0.8em 0; }
+  .card { flex: 1; border: 1px solid #eee; border-radius: 12px; padding: clamp(14px, 2vw, 28px); }
+  .dark .card { border-color: #2a2a2a; }
+  .card .icon { font-size: clamp(1.5em, 3vw, 2.2em); margin-bottom: 0.4em; }
+  .card h3 { margin: 0 0 0.3em; font-size: clamp(0.9em, 1.6vw, 1.1em); }
+  .card p { font-size: clamp(0.8em, 1.4vw, 0.95em); color: #666; margin: 0; }
+  .dark .card p { color: #aaa; }
+
+  /* Architecture SVG */
+  .arch-svg { max-width: clamp(400px, 60vw, 760px); width: 100%; height: auto; margin: 0.3em 0; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- Slide 0: Title -->
+  <section class="slide title-slide dark active">
+    <img src="assets/adal-logo-horizontal.svg" class="logo-large" alt="AdaL">
+    <h1>Beyond Loop Engineering</h1>
+    <p class="subtitle">From Vibe Coding to Vertical Agent SaaS</p>
+    <p class="meta">AdaL Bootcamp 2 · Class 1 · July 4, 2026</p>
+    <div class="slide-num">1 / 11</div>
+  </section>
+
+  <!-- Slide 1: Vibe Coding -->
+  <section class="slide">
+    <span class="tag">February 3, 2025</span>
+    <h1>Vibe Coding</h1>
+    <blockquote>
+      "There's a new kind of coding I call 'vibe coding', where you fully give in to the vibes, embrace exponentials, and forget that the code even exists."
+      <cite>— Andrej Karpathy</cite>
+    </blockquote>
+    <div class="two-col" style="margin-top:20px">
+      <div>
+        <h3>What it means</h3>
+        <p>Describe what you want → AI writes the code → accept by vibe.</p>
+      </div>
+      <div>
+        <h3>The limit Karpathy flagged</h3>
+        <p>A prompt is typed once and forgotten. The real leverage became the <span class="accent">procedure</span>.</p>
+      </div>
+    </div>
+    <div class="slide-num">2 / 11</div>
+  </section>
+
+  <!-- Slide 2: Software Eras -->
+  <section class="slide">
+    <span class="tag">June 17, 2025 · YC AI Startup School</span>
+    <h1>Three Eras of Software</h1>
+    <table>
+      <tr><th>Era</th><th>"Code" is…</th><th>When</th></tr>
+      <tr><td><strong>Software 1.0</strong></td><td>Handwritten instructions</td><td>Since forever</td></tr>
+      <tr><td><strong>Software 2.0</strong></td><td>Neural network weights</td><td>Karpathy's 2017 essay</td></tr>
+      <tr><td><strong>Software 3.0</strong></td><td>Prompts in natural language</td><td>June 2025 keynote</td></tr>
+    </table>
+    <p style="margin-top:20px">English became a programming language. The prompt replaced the program.</p>
+    <p class="muted">Source: <a href="https://www.ycombinator.com/library/MW-andrej-karpathy-software-is-changing-again">YC — "Software Is Changing (Again)"</a></p>
+    <div class="slide-num">3 / 11</div>
+  </section>
+
+  <!-- Slide 3: Anthropic Pivot -->
+  <section class="slide">
+    <span class="tag">Mid-2025</span>
+    <h1>Anthropic's Pivot</h1>
+    <blockquote>
+      "After a few years of prompt engineering being the focus… a new term has come to prominence: context engineering."
+      <cite>— Anthropic</cite>
+    </blockquote>
+    <div class="two-col" style="margin-top:24px">
+      <div>
+        <h3>Prompt → Context</h3>
+        <p>From writing good instructions to curating the <span class="accent">entire token set</span> the model sees each turn.</p>
+      </div>
+      <div>
+        <h3>Three techniques</h3>
+        <ul style="font-size:0.95em">
+          <li>Compaction</li>
+          <li>Structured note-taking on disk</li>
+          <li>Sub-agent architectures</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-num">4 / 11</div>
+  </section>
+
+  <!-- Slide 4: Loop Engineering -->
+  <section class="slide dark">
+    <span class="tag">June 7, 2026</span>
+    <h1>Loop Engineering</h1>
+    <blockquote>
+      "Loop engineering is replacing yourself as the person who prompts the agent. You design the system that does it instead."
+      <cite>— Addy Osmani, Google Cloud</cite>
+    </blockquote>
+    <div class="two-col" style="margin-top:28px">
+      <div>
+        <h3 style="color:#999">Vibe coding</h3>
+        <ul style="color:#aaa;font-size:0.95em">
+          <li>You type a prompt</li>
+          <li>You read the output</li>
+          <li>You decide when done</li>
+          <li>Runs while you watch</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="color:#FF5898">Loop engineering</h3>
+        <ul style="font-size:0.95em">
+          <li>You design a procedure</li>
+          <li>The loop reads and verifies</li>
+          <li>A separate evaluator checks</li>
+          <li>Runs while you sleep</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-num">5 / 11</div>
+  </section>
+
+  <!-- Slide 5: The Reality -->
+  <section class="slide">
+    <span class="tag">July 2026 · The honest truth</span>
+    <h1>The Reality</h1>
+    <p style="font-size:1.3em;text-align:center;max-width:700px">Loop engineering works — but only for the <span class="accent">1%</span> who can build their own harness.</p>
+    <div class="cards" style="margin-top:32px">
+      <div class="card">
+        <div class="icon">🔨</div>
+        <h3>Hand-crafted harness</h3>
+        <p>Every loop is bespoke: hooks, TOML, skills, cron. "Tedious and of questionable value."</p>
+      </div>
+      <div class="card">
+        <div class="icon">📝</div>
+        <h3>Specs are the bottleneck</h3>
+        <p>"By the time I finish the spec, the agent is waiting for the next feature."</p>
+      </div>
+      <div class="card">
+        <div class="icon">💸</div>
+        <h3>Token costs multiply</h3>
+        <p>Each iteration, review, and failure costs tokens. "A money glitch for AI companies."</p>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:16px">Sources: HN "The Coming Loop" (245+ comments), Reddit r/ClaudeCode, Claude Code docs</p>
+    <div class="slide-num">6 / 11</div>
+  </section>
+
+  <!-- Slide 6: AdaL -->
+  <section class="slide dark">
+    <h1 style="color:#fff;font-size:2.2em">AdaL Changes This</h1>
+    <p style="color:#ccc;font-size:1.1em;text-align:center;max-width:640px;margin-bottom:12px">From "build-your-own-harness" to <span class="accent">"just describe what you want."</span></p>
+    <img src="assets/adal-architecture.svg" class="arch-svg" alt="AdaL Architecture">
+    <p style="color:#FF5898;font-size:1em;text-align:center;max-width:640px;font-weight:600">Cost-effective loop engineering — you can't burn tier-1 model tokens in a loop.</p>
+    <div class="slide-num">7 / 11</div>
+  </section>
+
+  <!-- Slide 7: Full Offering -->
+  <section class="slide">
+    <span class="tag">Beyond Loop Engineering</span>
+    <h1>AdaL's Full Offering</h1>
+    <div class="two-col" style="margin-top:20px">
+      <div>
+        <h3 style="color:#FF5898">[1] Coding Agent</h3>
+        <ul style="font-size:0.95em">
+          <li><strong>Deep research</strong> — sub-agent researches the domain</li>
+          <li><strong>Coding</strong> — implements, tests, surgical edits</li>
+          <li><strong>Browser use</strong> — designs & debugs UIs</li>
+          <li><strong>Engineer mode</strong> — hides complexity, adapts to your tastes</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="color:#FF5898">[2] Agent Solution</h3>
+        <ul style="font-size:0.95em">
+          <li><strong>Agent SDK</strong> — build & deploy agents in your app</li>
+          <li><strong>Agent cloud</strong> — spin up instantly, no servers</li>
+        </ul>
+        <p style="margin-top:16px;font-size:0.95em;color:#666">Build with it. Then power it.</p>
+      </div>
+    </div>
+    <div class="slide-num">8 / 11</div>
+  </section>
+
+  <!-- Slide 8: Vertical SaaS -->
+  <section class="slide">
+    <span class="tag">The Vision</span>
+    <h1>Vertical Agent SaaS</h1>
+    <table>
+      <tr><th>Traditional</th><th>AdaL</th></tr>
+      <tr><td>Research domain yourself (weeks)</td><td class="accent">Deep-research worker (hours)</td></tr>
+      <tr><td>Dev team builds it (months)</td><td class="accent">Drive AdaL (days)</td></tr>
+      <tr><td>Hire a designer</td><td class="accent">Browser-use agent designs</td></tr>
+      <tr><td>Wire infra from scratch</td><td class="accent">Agent SDK + cloud, instant</td></tr>
+      <tr><td>Maintain harness yourself</td><td class="accent">Engineer mode handles it</td></tr>
+    </table>
+    <p style="margin-top:20px;font-size:1.1em">The next wave of SaaS is vertical agent products. <span class="accent">AdaL is both the builder and the engine.</span></p>
+    <div class="slide-num">9 / 11</div>
+  </section>
+
+  <!-- Slide 9: Ecosystem -->
+  <section class="slide">
+    <span class="tag">The Landscape</span>
+    <h1>The Ecosystem</h1>
+    <table>
+      <tr><th>Tool</th><th>Introduced</th><th>You still build</th></tr>
+      <tr><td><strong>Claude Code</strong></td><td>/loop, /goal, hooks, subagents, SKILL.md</td><td>Contracts, roles, disk state</td></tr>
+      <tr><td><strong>Codex</strong></td><td>Automations, worktrees, /goal</td><td>Same — you wire it</td></tr>
+      <tr><td><strong>Cursor</strong></td><td>Agent mode, inline edits</td><td>Not loop-native</td></tr>
+      <tr><td><strong>OpenCode</strong></td><td>Model-agnostic, extensible</td><td>Framework only</td></tr>
+    </table>
+    <p style="margin-top:20px">Every tool ships <em>primitives</em>. AdaL ships the <span class="accent">loop</span>.</p>
+    <div class="slide-num">10 / 11</div>
+  </section>
+
+  <!-- Slide 10: Key People -->
+  <section class="slide dark">
+    <h1 style="color:#fff">Key People</h1>
+    <table>
+      <tr><th style="background:#1a1a1a;border-color:#FF5898">Person</th><th style="background:#1a1a1a;border-color:#FF5898">Contribution</th></tr>
+      <tr><td style="border-color:#2a2a2a"><strong>Andrej Karpathy</strong></td><td style="border-color:#2a2a2a;color:#ccc">Vibe coding · Software 3.0 · LOOPS.md</td></tr>
+      <tr><td style="border-color:#2a2a2a"><strong>Addy Osmani</strong></td><td style="border-color:#2a2a2a;color:#ccc">Named "loop engineering" (June 2026)</td></tr>
+      <tr><td style="border-color:#2a2a2a"><strong>Boris Cherny</strong></td><td style="border-color:#2a2a2a;color:#ccc">"I don't prompt Claude anymore. I write loops."</td></tr>
+      <tr><td style="border-color:#2a2a2a"><strong>Peter Steinberger</strong></td><td style="border-color:#2a2a2a;color:#ccc">"Design loops that prompt your agents."</td></tr>
+    </table>
+    <div class="slide-num">11 / 11</div>
+  </section>
+
+</div>
+
+<!-- Nav -->
+<div class="nav">
+  <button id="prev" onclick="changeSlide(-1)">← Prev</button>
+  <span class="counter" id="counter">1 / 11</span>
+  <button id="next" onclick="changeSlide(1)">Next →</button>
+</div>
+
+<script>
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+
+  function show(n) {
+    slides[current].classList.remove('active');
+    current = (n + total) % total;
+    slides[current].classList.add('active');
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('prev').disabled = current === 0;
+    document.getElementById('next').disabled = current === total - 1;
+  }
+  function changeSlide(dir) { show(current + dir); }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+    if (e.key === 'ArrowLeft') changeSlide(-1);
+  });
+  show(0);
+</script>
+</body>
+</html>
