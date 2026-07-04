@@ -1,0 +1,2 @@
+# The Clerk JWT for the demo identity — NEVER commit it.
+.adal_jwt
