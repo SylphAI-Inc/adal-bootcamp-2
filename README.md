@@ -22,6 +22,21 @@ The AdaL Engineer agent autonomously cloned a landing page end-to-end — resear
 
 ![AdaL Engineer cloned the landing page autonomously](slides/assets/screenshots/adal-engineer-clone.png)
 
+The prompt we used for this:
+
+```
+Clone the hero section of the landing page, https://www.hyperspell.com/ , put it inside of hyperspell-clone, needs to be exactly the same, from animation, content, font, color, styling, everything, pixel level, and video level including all effects 
+
+You have the two docs to refer to:
+
+
+1. clone_guide_v2.md (operational guide + appendices) — the one you follow
+2. clone_landing_page_101.md (deep reference) — the one you consult when stuck
+
+
+Use MiniMax M3 Browser Use for both evaluator and builder 
+```
+
 > The screenshot shows the agent's autonomous cloning workflow in action.
 
 ## Key Resources
