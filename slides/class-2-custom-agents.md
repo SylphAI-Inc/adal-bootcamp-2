@@ -64,14 +64,14 @@ AdaL ships with a full toolset. You control which tools the agent can see and us
 
 | Flag | What it does |
 |------|-------------|
-| `--allowed-tools` | Permission management — auto-approve specific tools (agent still sees all) |
-| `--remove-tools` | Strip built-in tools entirely — invisible + unexecutable |
+| `--enabled-default-tools` | Choose which built-in tools the agent can see and use |
+| `--disabled-default-tools` | Strip built-in tools entirely — invisible + unexecutable |
 
 Tool groups: `Bash`, `Edit`, `Read`, `Search`, `Web`, `Image`, `Video`, `Consult`
 
 ```bash
 # Agent can only read and search — no edits, no bash
-adal --remove-tools "Bash,Edit,Image,Video"
+adal --disabled-default-tools "Bash,Edit,Image,Video"
 ```
 
 > Full tool-choice documentation: [docs.sylph.ai/features/built-in-tools](https://docs.sylph.ai/features/built-in-tools)
@@ -166,7 +166,7 @@ async def main():
     async for event in query(
         prompt="Summarize this codebase",
         options=AdalAgentOptions(
-            allowed_tools=["Read", "Bash"],
+            enabled_default_tools=["Read", "Web"],
             # Auth: cached from CLI (recommended) or pass auth_token for CI
         ),
     ):
@@ -185,7 +185,7 @@ asyncio.run(main())
 ## Slide 10: Build Your Own — The Flow
 
 1. **Define persona** → `AGENTS.md` + `--prompt-file`
-2. **Choose tools** → `--remove-tools` / `--allowed-tools` to select a subset
+2. **Choose tools** → `--enabled-default-tools` or `--disabled-default-tools`
 3. **Add custom tools** → `.adal/tools.py` with `CUSTOM_TOOLS`
 4. **Create agent on Cloud** → name + prompt + tools
 5. **Start session** → stream chat via HTTP API
